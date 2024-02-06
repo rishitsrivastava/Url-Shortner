@@ -27,7 +27,7 @@ app.post('/shorten', async (req, res) => {
     })
 
     if(prev.length !== 0) {
-      res.json({ shorturl: prev[0].shorturl });
+      return res.json({ shorturl: prev[0].shorturl });
     }
 
     const shortId = shortid.generate();
@@ -66,7 +66,7 @@ app.get('/:shortId', async (req, res) => {
       return res.status(404).json({ error: 'Short URL not found' });
     }
   
-    const url = await URL.findOne({shortID: shortId, userId: req.body.userId})
+    const url = await URL.findOne({shortID: shortId})
     
     await URL.findOneAndUpdate(
       {shortID: shortId}, {numberOfClicks: url.numberOfClicks + 1}
@@ -76,6 +76,7 @@ app.get('/:shortId', async (req, res) => {
     res.redirect(url.longurl);
   }
   catch(error) {
+    console.log(error)
     res.status(500).json({error: 'Internal Server Error'})
   }
 });
