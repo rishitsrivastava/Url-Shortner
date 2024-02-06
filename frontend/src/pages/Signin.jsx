@@ -26,7 +26,7 @@ export default function Signin() {
           localStorage.setItem("token", response.data.token);
           Navigate("/dashboard");
         } catch (error) {
-          console.error("Signip error:", error);
+          console.error("Signin error:", error);
         }
       };
 
@@ -36,8 +36,8 @@ export default function Signin() {
         <div className='rounded-lg text-white p-2 text-center h-max px-4 bg-slate-900'>
           <Heading label={"Sign in"} />
           <SubHeading label={"Enter your credentials to access your account"} />
-          <InputBox onChange={(e) => {e.target.value}} placeholder="user@gmail.com" label={"Email"} />
-          <InputBox onChange={(e) => {e.target.value}}  placeholder="123456" label={"Password"} />
+          <InputBox onChange={(e) => setUserName(e.target.value)} placeholder="user@gmail.com" label={"Email"} />
+          <InputBox onChange={(e) => setPassword(e.target.value)}  placeholder="123456" label={"Password"} />
           <div className='pt-4'>
             <Button onClick={handleSignin} label={"Sign in"} />
           </div>

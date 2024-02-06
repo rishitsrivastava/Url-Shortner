@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 
 export default function Dashboard() {
     const [url, setUrl] = useState("");
-    const [displayedValue, setDisplayedValue] = useState(""); 
+    const [displayedValue, setDisplayedValue] = useState([]); 
 
     const handleInputChange = (e) => {
-        setUrl(e)
+        setUrl(e.target.value)
     }
 
     const handlerf = () => {
-        setDisplayedValue(url);
-    }
-
+        setDisplayedValue([...displayedValue, { index: displayedValue.length + 1, value: url }]);
+        setUrl('');
+      };
   return (
-    <div className='bg-slate-950 h-screen'>
+    <div className='bg-slate-950 h-screenf flex flex-col justify-center'>
         <div className='bg-slate-800 p-7 mb-12'>
             <div className='text-slate-200 font-semibold text-2xl cursor-pointer'>
                 URL Shortner
@@ -28,11 +28,26 @@ export default function Dashboard() {
             </div>
         </div>
 
-        <div className='bg-slate-800 h-80 w-[40rem] m-5'>
-            <div>
-                {displayedValue}
+        <div className='bg-slate-800 h-80 lg:w-[80rem] shadow-2xl m-5'>
+            <div className='text-slate-200 grid-cols-3 font-medium text-lg flex justify-between m-5'>
+            <table className="border-collapse border border-slate-700 w-96">
+          <thead>
+            <tr>
+              <th className="border border-slate-700 p-2">Index</th>
+              <th className="border border-slate-700 p-2">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayedValue.map((item) => (
+              <tr key={item.index}>
+                <td className="border border-slate-700 p-2">{item.index}</td>
+                <td className="border border-slate-700 p-2">{item.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
             </div>
         </div>
-    </div>
+    </div> 
   )
 }

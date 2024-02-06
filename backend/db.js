@@ -31,8 +31,32 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+const urlSchema = new mongoose.Schema({
+    longurl: {
+        type: String,
+        required: true,
+    },
+    shorturl: {
+        type: String,
+        required: true
+    },
+    shortID: {
+        type: String,
+        required: true
+    },
+    numberOfClicks: {
+        type: Number,
+        required: true,
+        default: 0
+    }
+}, {
+    timestamps: true
+})
+
 const User = mongoose.model('User', userSchema);
+const URL = mongoose.model('URL', urlSchema);
 
 module.exports = {
-    User
+    User,
+    URL
 }
