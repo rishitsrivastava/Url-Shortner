@@ -71,8 +71,9 @@ app.get('/:shortId', async (req, res) => {
     await URL.findOneAndUpdate(
       {shortID: shortId}, {numberOfClicks: url.numberOfClicks + 1}
     )
+    await url.save();
   
-    res.redirect(longUrl);
+    res.redirect(url.longurl);
   }
   catch(error) {
     res.status(500).json({error: 'Internal Server Error'})
