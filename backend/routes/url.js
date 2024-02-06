@@ -15,30 +15,30 @@ const urlDatabase = {};
 
 app.post('/shorten', async (req, res) => {
   try {
-    const { longUrl } = req.body;
+    const { longurl } = req.body;
 
-    if (!longUrl) {
+    if (!longurl) {
       return res.status(400).json({ error: 'Long URL is required' });
     }
 
     const prev = await URL.find({
-      longurl: longUrl,
+      longurl: longurl,
       userId: req.user.userId
     })
 
-    if(prev.length != 0) {
-      res.json({ shortUrl: prev[0].shorturl });
+    if(prev.length !== 0) {
+      res.json({ shorturl: prev[0].shorturl });
     }
 
     const shortId = shortid.generate();
 
-    urlDatabase[shortId] = longUrl;
+    urlDatabase[shortId] = longurl;
 
-    const shortUrl = `http://localhost:${PORT}/${shortId}`;
+    const shorturl = `http://localhost:${PORT}/${shortId}`;
 
     const object = {
-      longurl: longUrl,
-      shorturl:  shortUrl,
+      longurl: longurl,
+      shorturl:  shorturl,
       shortID: shortId,
       numberOfClicks: 0,
       userId: req.user.userId
@@ -46,10 +46,11 @@ app.post('/shorten', async (req, res) => {
 
     const user = await URL.create(object)
 
-    res.json({ shortUrl });
+    res.json({ shorturl });
   }
 
   catch(error) {
+    console.log(error)
     res.status(500).json({
       error: "Internal Server Error"
     })

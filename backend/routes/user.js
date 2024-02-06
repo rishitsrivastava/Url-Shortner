@@ -60,13 +60,15 @@ const signinBody = zod.object({
 
 userRouter.post("/signin", async(req, res) => {
     try {
-        const {success, data} = signinBody.safeParse(req.body);
+        const {success} = signinBody.safeParse(req.body);
         if(!success) {
             return res.status(411).json({
                 message: "Invalid input data"
             })
         }
-        const user = await User.findOne({data});
+        const user = await User.findOne({
+            userName: req.body.userName
+        });
 
         if(!user) {
             return res.status(411).json({
