@@ -1,5 +1,5 @@
 const express = require("express");
-const { User } = require("../db");
+const { User, URL } = require("../db");
 const zod = require("zod");
 const jwt = require("jsonwebtoken");
 const userRouter = express.Router();
@@ -82,6 +82,20 @@ userRouter.post("/signin", async(req, res) => {
         })
     }
 
+    catch(error) {
+        res.status(500).json({
+            error: "Internal server error"
+        })
+    }
+})
+
+userRouter.get("/urls", async (req,res) => {
+    try {
+        const urls = await URL.find({
+            userId: req.user.userId
+        });
+        res.json(urls)
+    }
     catch(error) {
         res.status(500).json({
             error: "Internal server error"
