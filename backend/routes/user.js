@@ -14,37 +14,43 @@ const signupBody = zod.object({
 })
 
 userRouter.post("/signup", async (req, res) => {
-    const { success } = signupBody.safeParse(req.body);
-    const person = await User.findOne({
-        userName: req.body.userName
-    });
-    if(!success) {
-        return res.status(411).json({
-            msg: "Email already taken / Incorrect inputs"
+    try {
+        const { success } = signupBody.safeParse(req.body);
+        const person = await User.findOne({
+            userName: req.body.userName
+        });
+        if(!success) {
+            return res.status(411).json({
+                msg: "Email already taken / Incorrect inputs"
+            })
+        }
+        if(person) {
+            return res.status(411).json({
+                msg: "user already exists"
+            });
+        }
+
+        const user = await User.create({
+            userName: req.body.userName,
+            password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+        })
+        const userID = user._id;
+
+        const token = jwt.sign({
+            userID
+        }, JWT_Secret)
+
+        res.json({
+            message: "User created successfully",
+            token: token
+        })
+    } catch(error) {
+        res.status(500).json({
+            error: "Internal server error"
         })
     }
-    if(person) {
-        return res.status(411).json({
-            msg: "user already exists"
-        });
-    }
-
-    const user = await User.create({
-        userName: req.body.userName,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName
-    })
-    const userID = user._id;
-
-    const token = jwt.sign({
-        userID
-    }, JWT_Secret)
-
-    res.json({
-        message: "User created successfully",
-        token: token
-    })
 })
 
 const signinBody = zod.object({
@@ -53,28 +59,34 @@ const signinBody = zod.object({
 })
 
 userRouter.post("/signin", async(req, res) => {
-    const {success} = signinBody.safeParse(req.body);
-    if(!success) {
-        return res.status(411).json({
-            message: "email already taken or incorrect inputs"
-        })
-    }
-    const user = await User.findOne({
-        userName: req.body.userName,
-        password: req.body.password
-    });
-    if(user) {
+    try {
+        const {success, data} = signinBody.safeParse(req.body);
+        if(!success) {
+            return res.status(411).json({
+                message: "Invalid input data"
+            })
+        }
+        const user = await User.findOne({data});
+
+        if(!user) {
+            return res.status(411).json({
+                error: "Invalid username or password"
+            })
+        }
+
         const token = jwt.sign({
             userId : user._id
         }, JWT_Secret);
         res.json({
             token:token
         })
-        return;
     }
-    res.status(411).json({
-        message: "error while logging in"
-    })
+
+    catch(error) {
+        res.status(500).json({
+            error: "Internal server error"
+        })
+    }
 })
 
 

@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
-const { Mongodb_url } = require("./url");
-mongoose.connect(Mongodb_url);
+const { Mongodb_url } = require("./mongourl");
+mongoose.connect(Mongodb_url)
+    .then(() => console.log('Connected to mongodb'))
+    .catch(err => console.error('error connecting to mongodb', err));
 
 const userSchema = new mongoose.Schema({
     userName : {
