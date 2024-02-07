@@ -72,7 +72,6 @@ export default function Dashboard() {
     const openInNewTab = (url) => {
       window.open(url, '_blank');
     };
-    console.log(displayedValue)
 
     const handleDelete = async (id) => {
       try {
@@ -83,8 +82,9 @@ export default function Dashboard() {
           }
         });
         if (response.status === 200) {
+          const updatedUrls = displayedValue.filter(url => url._id != id);
+          setDisplayedValue(updatedUrls);
           console.log("URL deleted successfully");
-          alert("deleted")
         } else {
           console.error("Failed to delete URL:", response.data.message);
           alert("error while deleting.")
