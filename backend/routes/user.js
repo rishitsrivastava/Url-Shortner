@@ -79,7 +79,7 @@ userRouter.post("/signin", async(req, res) => {
         const token = jwt.sign({
             userId : user._id
         }, JWT_Secret);
-        res.json({
+        res.status(200).json({
             token:token
         })
     }
@@ -90,6 +90,8 @@ userRouter.post("/signin", async(req, res) => {
         })
     }
 })
+
+userRouter.use(authMiddleware);
 
 userRouter.get("/urls", async (req,res) => {
     try {

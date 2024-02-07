@@ -10,6 +10,7 @@ import axios from 'axios'
 export default function Signin() {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const handleSignin = async () => {
         try {
@@ -24,11 +25,16 @@ export default function Signin() {
           })
     
           localStorage.setItem("token", response.data.token);
-          Navigate("/dashboard");
+          localStorage.setItem("isLoggedIn", true);
+          setLoggedIn(true);
         } catch (error) {
           console.error("Signin error:", error);
         }
       };
+
+      if (loggedIn && localStorage.getItem("isLoggedIn")) {
+        return <Navigate to="/dashboard" />;
+      }
 
   return (
     <div className='flex  bg-slate-950 h-screen justify-center'>
