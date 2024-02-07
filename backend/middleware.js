@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken")
 const checkList = ["/shorten"]
 
 const authMiddleware = (req, res, next) => {
-    console.log(req.headers)
     if(checkList.indexOf(req.url.split("?")[0])>-1) {
         const authHeader = req.headers.authorization;
         if(!authHeader || !authHeader.startsWith('Bearer ')) {
