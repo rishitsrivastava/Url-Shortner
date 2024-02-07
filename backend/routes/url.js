@@ -57,27 +57,22 @@ app.post('/shorten', async (req, res) => {
   }
 });
 
-app.get('/:shortId', async (req, res) => {
+app.get('/:id', async (req, res) => {
   try {
-    const { shortId } = req.params;
-    const longUrl = urlDatabase[shortId];
-  
-    if (!longUrl) {
-      return res.status(404).json({ error: 'Short URL not found' });
-    }
-  
-    const url = await URL.findOne({shortID: shortId})
-    
-    await URL.findOneAndUpdate(
-      {shortID: shortId}, {numberOfClicks: url.numberOfClicks + 1}
-    )
+    const { id } = req.params;
+    const url = await URL.findById(id);
+    if(!url) {
+      return res.status(404).json({
+        error: "URL not found"
+      })
+    };
+    url.numberOfClicks += 1;
     await url.save();
-  
     res.redirect(url.longurl);
   }
   catch(error) {
     console.log(error)
-    res.status(500).json({error: 'Internal Server Error'})
+    res.status(500).json({error: 'Internal Server Error from /:id numberOfClicks'})
   }
 });
 

@@ -1,7 +1,7 @@
 const {JWT_Secret} = require("./config")
 const jwt = require("jsonwebtoken")
 
-const checkList = ["/shorten", "/urls", "/urls/:id"]
+const checkList = ["/shorten", "/urls", "/:id"]
 
 const authMiddleware = (req, res, next) => {
     if(checkList.indexOf(req.url.split("?")[0])>-1) {

@@ -8,6 +8,7 @@ export default function Dashboard() {
     const [displayedValue, setDisplayedValue] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [authenticated, setAuthenticated] = useState(false);
+    const numberOfClicks = 0;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,7 +61,7 @@ export default function Dashboard() {
             }
           });
           if (response.status === 200) {
-            const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks:response.data.numberOfClicks }];
+            const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks:0 }];
             setDisplayedValue(updatedUrls);
           }
       } catch (error) {
@@ -69,8 +70,25 @@ export default function Dashboard() {
       }
     };
 
-    const openInNewTab = (url) => {
+    const openInNewTab = async (url, id) => {
       window.open(url, '_blank');
+      try{
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:3000/api/v1/url/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const updatedUrls = displayedValue.map((urlData) => {
+          if(url.shorturl === url) {
+            return {...urlData, numberOfClicks: urlData.numberOfClicks + 1};
+          }
+          return urlData;
+        })
+        setDisplayedValue(updatedUrls);
+      } catch(error) {
+        console.error("Error while updating numberOfClicks:", error);
+      }
     };
 
     const handleDelete = async (id) => {
@@ -129,9 +147,9 @@ export default function Dashboard() {
               {displayedValue.map((urlData, index) => (
                 <tr key={index} className='text-slate-200 border-b border-slate-700'>
                   <td className='p-4 overflow-hidden'>
-                    <a href='#' onClick={() => openInNewTab(urlData.longurl)}>{urlData.longurl}</a></td>
+                    <a href='#' onClick={() => openInNewTab(urlData.longurl, urlData._id)}>{urlData.longurl}</a></td>
                   <td className='p-4 overflow-hidden'>
-                    <a href="#" onClick={() => openInNewTab(urlData.shorturl)}>{urlData.shorturl}</a>
+                    <a href="#" onClick={() => openInNewTab(urlData.shorturl, urlData._id)}>{urlData.shorturl}</a>
                   </td>
                   <td className='p-4'>{urlData.numberOfClicks}</td>
                   <td><button onClick={() => handleDelete(urlData._id)} className="ml-6 hover:scale-125"><MdDelete className='size-6' /></button></td>

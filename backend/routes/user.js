@@ -124,21 +124,5 @@ userRouter.delete("/urls/:id", async (req, res) => {
     }
 })
 
-userRouter.get("/urls/:id", async (req, res) => {
-    try {
-        const numberOfClicks = await URL.findById(req.params.id);
-        if(!numberOfClicks) {
-            res.status(404).json({
-                message: "URL not found for updating numberOfClicks"
-            })
-        }
-        res.status(200).json({
-            numberOfClicks: numberOfClicks
-        })
-    } catch(error) {
-        console.log("error while updating the numberOfClicks in backend");
-        res.status(500).json({ error: "internal server error, in /urls/:id for numberOfClicks"})
-    }
-})
 
 module.exports = userRouter;
