@@ -42,7 +42,7 @@ userRouter.post("/signup", async (req, res) => {
             userID
         }, JWT_Secret)
 
-        res.json({
+        res.status(200).json({
             message: "User created successfully",
             token: token
         })
@@ -98,14 +98,30 @@ userRouter.get("/urls", async (req,res) => {
         const urls = await URL.find({
             userId: req.user.userId
         });
-        res.json(urls)
+        res.status(200).json(urls)
     }
     catch(error) {
         res.status(500).json({
-            error: "Internal server error"
+            error: "Internal server error, in /urls"
         })
     }
 })
 
+userRouter.delete("/urls/:id", async (req, res) => {
+    try {
+        const deletedUrl = await URL.findByIdAndDelete(req.params.id);
+        if(!deletedUrl) {
+            res.status(404).json({
+                message: "URL not found"
+            })
+        }
+        res.status(200).json({
+            message: "URL deleted successfully"
+        })
+    } catch(error) {
+        console.log("error while deleting the url");
+        res.status(500).json({ error: "internal server error, in /urls/:id"})
+    }
+})
 
 module.exports = userRouter;
