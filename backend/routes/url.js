@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const shortid = require('shortid');
 const { URL } = require("../db");
@@ -6,6 +7,7 @@ const { authMiddleware } = require("../middleware")
 
 const app = express();
 const PORT = 3001;
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -60,15 +62,15 @@ app.post('/shorten', async (req, res) => {
 app.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const url = await URL.findById(id);
-    if(!url) {
-      return res.status(404).json({
-        error: "URL not found"
-      })
-    };
-    url.numberOfClicks += 1;
-    await url.save();
-    res.redirect(url.longurl);
+    const updatedUrl = await URL.findByIdAndUpdate(id, { $inc: { numberOfClicks: 1 } }, { new: true });
+
+    if (!updatedUrl) {
+        return res.status(404).json({ error: 'URL not found' });
+    }
+
+    updatedUrl.numberOfClicks += 1;
+    await updatedUrl.save();
+    res.redirect(updatedUrl.longurl);
   }
   catch(error) {
     console.log(error)

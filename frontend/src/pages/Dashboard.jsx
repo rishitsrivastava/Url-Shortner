@@ -74,18 +74,20 @@ export default function Dashboard() {
       window.open(url, '_blank');
       try{
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/api/v1/url/${id}`, {
+        const response = await axios.get('http://localhost:3000/api/v1/url/${id}', {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        const updatedUrls = displayedValue.map((urlData) => {
-          if(url.shorturl === url) {
-            return {...urlData, numberOfClicks: urlData.numberOfClicks + 1};
-          }
-          return urlData;
-        })
-        setDisplayedValue(updatedUrls);
+        // const updatedUrls = displayedValue.map((urlData) => {
+        //   if(urlData._id === id) {
+        //     return {...urlData, numberOfClicks: urlData.numberOfClicks + 1};
+        //   }
+        //   return urlData;
+        // })
+        // setDisplayedValue(updatedUrls);
+        const longUrl = response.data.longurl; // Extract the longurl from the response
+        window.open(longUrl, '_blank');
       } catch(error) {
         console.error("Error while updating numberOfClicks:", error);
       }
