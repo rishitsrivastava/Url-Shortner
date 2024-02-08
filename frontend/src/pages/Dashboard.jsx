@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom';
 import { MdDelete } from "react-icons/md";
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Dashboard() {
     const [url, setUrl] = useState("");
@@ -63,10 +64,11 @@ export default function Dashboard() {
           if (response.status === 200) {
             const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks: response.data.numberOfClicks }];
             setDisplayedValue(updatedUrls);
+            toast.success('Short Link created!')
           }
       } catch (error) {
           console.log(error)
-          console.error('Error shortening URL:', error);
+          toast.error('Error shortening URL');
       }
     };
 
@@ -82,11 +84,11 @@ export default function Dashboard() {
         });
         if (response.status === 200) {
           const updatedUrls = displayedValue.filter(url => url._id != id);
+          toast.success('URL Deleted successfully!')
           setDisplayedValue(updatedUrls);
-          console.log("URL deleted successfully");
         } else {
           console.error("Failed to delete URL:", response.data.message);
-          alert("error while deleting.")
+          toast.error("error while deleting.")
         }
       } catch (error) {
         console.error("Error while deleting URL:", error);
@@ -150,13 +152,14 @@ export default function Dashboard() {
                     <a href="#" onClick={() => openInNewTab(urlData.shorturl)}>{urlData.shorturl}</a>
                   </td>
                   <td className='p-4'>{urlData.numberOfClicks}</td>
-                  <td><button onClick={() => handleDelete(urlData._id)} className="ml-6 hover:scale-125"><MdDelete className='size-6' /></button></td>
+                  <td><button onClick={() => handleDelete(urlData._id)} className="ml-6 hover:scale-125 transition"><MdDelete className='size-6' /></button></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+      <Toaster />
 
     </div> 
   )
