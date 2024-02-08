@@ -115,9 +115,12 @@ export default function Dashboard() {
 
   return (
     <div className='bg-slate-950 h-screen flex flex-col justify-center overflow-auto'>
-      <div className='bg-slate-800 p-7 mb-8'>
+      <div className='bg-slate-800 p-7 mb-8 flex justify-between'>
         <div className='text-slate-200 font-semibold text-2xl cursor-pointer'>
           URL Shortner
+        </div>
+        <div className='text-slate-200 text-lg underline-offset-8'>
+          Made with ❤ by Rishit
         </div>
       </div>
 
