@@ -16,17 +16,19 @@ app.use(authMiddleware);
 const urlDatabase = {};
 
 app.post('/shorten', async (req, res) => {
+  console.log(req.user);
   try {
     const { longurl } = req.body;
 
     if (!longurl) {
       return res.status(400).json({ error: 'Long URL is required' });
     }
-
+  
     const prev = await URL.find({
       longurl: longurl,
       userId: req.user.userId
     })
+    console.log(prev);
 
     if(prev.length !== 0) {
       return res.json({ shorturl: prev[0].shorturl });
