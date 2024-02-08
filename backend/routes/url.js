@@ -59,24 +59,27 @@ app.post('/shorten', async (req, res) => {
   }
 });
 
-app.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedUrl = await URL.findByIdAndUpdate(id, { $inc: { numberOfClicks: 1 } }, { new: true });
 
-    if (!updatedUrl) {
-        return res.status(404).json({ error: 'URL not found' });
+app.get('/redirect', async (req, res) => {
+  try {
+    const { shortUrl } = req.query;
+
+    const url = await URL.findOne({ shorturl: shortUrl });
+
+    if (!url) {
+      return res.status(404).json({ error: 'Short URL not found' });
     }
 
-    updatedUrl.numberOfClicks += 1;
-    await updatedUrl.save();
-    res.redirect(updatedUrl.longurl);
-  }
-  catch(error) {
-    console.log(error)
-    res.status(500).json({error: 'Internal Server Error from /:id numberOfClicks'})
+    url.numberOfClicks++;
+    await url.save();
+
+    res.redirect(url.longurl);
+  } catch (error) {
+    console.error("Error while redirecting:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {

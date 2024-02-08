@@ -61,7 +61,7 @@ export default function Dashboard() {
             }
           });
           if (response.status === 200) {
-            const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks:0 }];
+            const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks: response.data.numberOfClicks }];
             setDisplayedValue(updatedUrls);
           }
       } catch (error) {
@@ -70,28 +70,7 @@ export default function Dashboard() {
       }
     };
 
-    const openInNewTab = async (url, id) => {
-      window.open(url, '_blank');
-      try{
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/api/v1/url/${id}', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        // const updatedUrls = displayedValue.map((urlData) => {
-        //   if(urlData._id === id) {
-        //     return {...urlData, numberOfClicks: urlData.numberOfClicks + 1};
-        //   }
-        //   return urlData;
-        // })
-        // setDisplayedValue(updatedUrls);
-        const longUrl = response.data.longurl; // Extract the longurl from the response
-        window.open(longUrl, '_blank');
-      } catch(error) {
-        console.error("Error while updating numberOfClicks:", error);
-      }
-    };
+
 
     const handleDelete = async (id) => {
       try {
@@ -111,6 +90,23 @@ export default function Dashboard() {
         }
       } catch (error) {
         console.error("Error while deleting URL:", error);
+      }
+    };
+
+    const openInNewTab = async (shortUrl) => {
+      window.open(shortUrl, '_blank');
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:3000/api/v1/url/redirect`, {
+          params: { shortUrl },
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const longUrl = response.data.longUrl;
+        window.open(longUrl, '_blank');
+      } catch (error) {
+        console.error("Error while redirecting:", error);
       }
     };
     
@@ -149,9 +145,9 @@ export default function Dashboard() {
               {displayedValue.map((urlData, index) => (
                 <tr key={index} className='text-slate-200 border-b border-slate-700'>
                   <td className='p-4 overflow-hidden'>
-                    <a href='#' onClick={() => openInNewTab(urlData.longurl, urlData._id)}>{urlData.longurl}</a></td>
+                    <a href='#' onClick={() => openInNewTab(urlData.longurl)}>{urlData.longurl}</a></td>
                   <td className='p-4 overflow-hidden'>
-                    <a href="#" onClick={() => openInNewTab(urlData.shorturl, urlData._id)}>{urlData.shorturl}</a>
+                    <a href="#" onClick={() => openInNewTab(urlData.shorturl)}>{urlData.shorturl}</a>
                   </td>
                   <td className='p-4'>{urlData.numberOfClicks}</td>
                   <td><button onClick={() => handleDelete(urlData._id)} className="ml-6 hover:scale-125"><MdDelete className='size-6' /></button></td>
