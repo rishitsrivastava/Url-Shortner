@@ -99,7 +99,7 @@ export default function Dashboard() {
       window.open(shortUrl, '_blank');
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/api/v1/url/redirect`, {
+        const response = await axios.get(`http://localhost:3000/api/v1/url/${shortUrl}`, {
           params: { shortUrl },
           headers: {
             Authorization: `Bearer ${token}`
@@ -107,6 +107,7 @@ export default function Dashboard() {
         });
         const longUrl = response.data.longUrl;
         window.open(longUrl, '_blank');
+        window.location.reload()
       } catch (error) {
         console.error("Error while redirecting:", error);
       }
