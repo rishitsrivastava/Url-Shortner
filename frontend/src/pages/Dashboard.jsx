@@ -62,7 +62,7 @@ export default function Dashboard() {
             }
           });
           if (response.status === 200) {
-            const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks: response.data.numberOfClicks }];
+            const updatedUrls = [...displayedValue, { longurl: url, shorturl: response.data.shorturl, numberOfClicks: 0 }];
             setDisplayedValue(updatedUrls);
             toast.success('Short Link created!')
           }
@@ -105,9 +105,7 @@ export default function Dashboard() {
             Authorization: `Bearer ${token}`
           }
         });
-        const longUrl = response.data.longUrl;
-        window.open(longUrl, '_blank');
-        window.location.reload()
+        location.reload(true)
       } catch (error) {
         console.error("Error while redirecting:", error);
       }
