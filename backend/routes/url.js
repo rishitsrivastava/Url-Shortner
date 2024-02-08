@@ -6,7 +6,7 @@ const { URL } = require("../db");
 const { authMiddleware } = require("../middleware")
 
 const app = express();
-const PORT = 3001;
+const Port = 3001;
 app.use(cors());
 
 app.use(bodyParser.json());
@@ -36,7 +36,7 @@ app.post('/shorten', async (req, res) => {
 
     urlDatabase[shortId] = longurl;
 
-    const shorturl = `http://localhost:${PORT}/${shortId}`;
+    const shorturl = `http://localhost:${Port}/${shortId}`;
 
     const object = {
       longurl: longurl,
@@ -60,30 +60,27 @@ app.post('/shorten', async (req, res) => {
 });
 
 
-app.get('/redirect', async (req, res) => {
-  try {
-    const { shortUrl } = req.query;
+app.get('/:shortId', async (req, res) => {
+  const { shortId } = req.params;
+  const longUrl = urlDatabase[shortId];
 
-    const url = await URL.findOne({ shorturl: shortUrl });
-
-    if (!url) {
-      return res.status(404).json({ error: 'Short URL not found' });
-    }
-
-    url.numberOfClicks++;
-    await url.save();
-
-    res.redirect(url.longurl);
-  } catch (error) {
-    console.error("Error while redirecting:", error);
-    res.status(500).json({ error: 'Internal Server Error' });
+  if (!longUrl) {
+    return res.status(404).json({ error: 'Short URL not found' });
   }
+
+  const url = await URL.findOne({shortID: shortId})
+
+  await URL.findOneAndUpdate(
+    {shortID: shortId}, {numberOfClicks: url.numberOfClicks + 1}
+  )
+
+  res.redirect(longUrl);
 });
 
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(Port, () => {
+  console.log(`Server is running on http://localhost:${Port}`);
 });
 
 module.exports = app;
